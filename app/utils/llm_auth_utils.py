@@ -1,5 +1,6 @@
 import requests
-
+import json
+from openai import AzureOpenAI
 def validate_openai_api_key(api_key: str) -> dict:
     """
     Validates the given OpenAI API key.
@@ -38,6 +39,39 @@ def validate_openai_api_key(api_key: str) -> dict:
             "error": f"Connection error: {str(conn_err)}",
             "statusCode": 503
         }
+    except Exception as err:
+        return {
+            "message": "Authentication Failed",
+            "error": str(err),
+            "statusCode": 500
+        }
+
+
+def validate_azure_api_key(api_key: dict) -> dict:
+    try:
+        # Make a simple request to validate the authentication
+        client = AzureOpenAI(
+                    azure_endpoint = api_key.get("azure_endpoint"),
+                    api_key = api_key.get("api_key"),
+                    api_version = api_key.get("api_version"),
+                    azure_deployment=api_key.get("azure_deployment")
+                )
+        resp = client.chat.completions.create(model= api_key.get("azure_deployment"),
+            messages=[{"role":"user","content":"Crack a joke"}]
+        )
+        resp = json.loads(resp.json())
+        if resp:
+            {
+                "message": "Authentication Success",
+                "error": None,
+                "statusCode": 200
+            }
+        else:
+            {
+                "message": "Authentication Failed",
+                "error": resp.json(),
+                "statusCode": 401
+            }
     except Exception as err:
         return {
             "message": "Authentication Failed",

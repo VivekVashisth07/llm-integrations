@@ -31,8 +31,6 @@ class OpenAIChat:
         Returns:
             str or generator: The generated response. If streaming is True, returns a generator.
         """
-        if not self.chat_model:
-            raise ValueError("OpenAI model is not authenticated. Call 'authenticate()' first.")
         try:
             # Build the prompt template
             chat_prompt = ChatPromptTemplate.from_messages([
