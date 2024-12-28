@@ -33,6 +33,8 @@ async def generate_response(
     context: str = Body( description="Additional context for the query.", default= "Chess is the best sport in the world"),
     streaming: bool = Body(False, description="Enable or disable streaming mode."),
     api_key: str = Body(..., description="The correct Openai Key."),
+    model_name: str = Body(..., description="Enter the model name"),
+    temperature: float = Body(0,description="Enter the temperature")
 ):
     """
     Endpoint to generate a response using OpenAI via LangChain.
@@ -45,7 +47,7 @@ async def generate_response(
         #     return key_valid
         
         # Initialize OpenAIChat instance and authenticate
-        openai_chat = OpenAIChat(api_key=api_key)
+        openai_chat = OpenAIChat(api_key=api_key,model_name=model_name, temperature=temperature)
         if streaming:
             # Streaming mode: Use a generator wrapped in StreamingResponse
             response_generator = openai_chat.generate_response(prompt, query, context, streaming=True)

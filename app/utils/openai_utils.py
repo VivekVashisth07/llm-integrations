@@ -3,7 +3,7 @@ from langchain.prompts.chat import ChatPromptTemplate
 from typing import Optional
 
 class OpenAIChat:
-    def __init__(self, api_key: str, temperature: float = 0.7):
+    def __init__(self, api_key: str, model_name: str, temperature: float = 0.7):
         """
         Initialize the OpenAIChat instance with API key and temperature.
 
@@ -15,7 +15,8 @@ class OpenAIChat:
         self.temperature = temperature
         self.chat_model = ChatOpenAI(
             temperature=self.temperature,
-            openai_api_key=self.api_key
+            openai_api_key=self.api_key,
+            model_name=model_name
         )
 
     def generate_response(self, prompt: str, query: str, context: str, streaming: bool = False):
