@@ -1,6 +1,9 @@
 import requests
 import json
 from openai import AzureOpenAI
+import google.generativeai as genai
+
+
 def validate_openai_api_key(api_key: str) -> dict:
     """
     Validates the given OpenAI API key.
@@ -72,6 +75,45 @@ def validate_azure_api_key(api_key: dict) -> dict:
                 "error": resp.json(),
                 "statusCode": 401
             }
+    except Exception as err:
+        return {
+            "message": "Authentication Failed",
+            "error": str(err),
+            "statusCode": 500
+        }
+
+def validate_gemini_api_key(api_key: str) -> dict:
+    """
+    Function to validate the API key with GenAI.
+
+    Args:
+        api_key (dict): A dictionary containing the API key as a string.
+
+    Returns:
+        dict: A dictionary containing the validation status and message.
+    """
+    try:
+        # Configure GenAI client with the provided API key
+        genai.configure(api_key=api_key.strip())
+
+        # Attempt to list available models
+        models = genai.list_models()
+
+        # Check if any models are available
+        if len(list(models)) > 1:
+            return {
+                "message": "Authentication Success",
+                "error": None,
+                "statusCode": 200
+            }
+
+        # If models are available, return success
+        return {
+            "message": "Authentication Failed",
+            "error": "Key Validation Error",
+            "statusCode": 401
+        }
+
     except Exception as err:
         return {
             "message": "Authentication Failed",
