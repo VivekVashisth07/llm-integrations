@@ -58,30 +58,14 @@ class GeminiChat:
                 # Streaming: Return a generator (simulating a chunk-by-chunk response)
                 response = self.chat_model.stream(messages)
                 for chunk in response:
-                    yield chunk.content
+                    yield str({"status":200,"message":chunk.content})
             else:
                 # Non-streaming: Return the full response
-                response = self.gemini_api_call(messages)
-                return response['choices'][0]['text']  # Placeholder for the response format
+                response = self.chat_model(messages)
+                yield {"status":200,"message":response.content}
         except Exception as e:
             print(str(e))
             return {
                 "statusCode": 500,
                 "message": str(e)
             }
-
-
-    def stream_gemini_response(self, messages: list):
-        """
-        Simulate streaming response for Gemini API.
-
-        Args:
-            messages (list): The formatted messages to send to the Gemini model.
-
-        Yields:
-            str: Chunks of the streaming response.
-        """
-        # Replace this with actual streaming logic when Gemini supports it.
-        # This is just a simulated generator for streaming response.
-        for i in range(3):
-            yield f"Streaming response chunk {i+1} from Gemini..."

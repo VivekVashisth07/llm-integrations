@@ -27,9 +27,9 @@ async def authenticate_gemini(api_key: str = Query(..., description="Enter your 
 
 @router.post("/gemini/generate")
 async def generate_response(
-    prompt: str = Body(..., description="The system prompt to guide the AI."),
-    query: str = Body(..., description="The user's query or input."),
-    context: str = Body("", description="Additional context for the query."),
+    prompt: str = Body(description="The system prompt to guide the AI.", default= "You have to answer the query by using or without using context"),
+    query: str = Body(description="The user's query or input.", default= "Who is Magnus Carlson"),
+    context: str = Body(description="Additional context for the query.", default= "Chess is the best sport in the world"),
     streaming: bool = Body(False, description="Enable or disable streaming mode."),
     api_key: str = Body(..., description="The correct Google Gemini API key."),
     temperature: str = Body(0, description="Enter the temperature"),
@@ -56,6 +56,7 @@ async def generate_response(
         else:
             # Non-streaming mode: Return the full response
             result = gemini_chat.generate_response(prompt, query, context, streaming=False)
+            print(result)
             return {"response": result}
     
     except Exception as e:
